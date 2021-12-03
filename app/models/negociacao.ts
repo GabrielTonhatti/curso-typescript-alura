@@ -15,4 +15,13 @@ export class Negociacao {
         return data;
     }
 
+    public static criaDe(dateString: string, quantidadeString: string, valorString: string): Negociacao {
+        const exp: RegExp = /-/g;
+        const date: Date = new Date(dateString.replace(exp, ','));
+        const quantidade: number = parseInt(quantidadeString);
+        const valor: number = parseFloat(valorString);
+
+        return new Negociacao(date, quantidade, valor);
+    }
+
 }
