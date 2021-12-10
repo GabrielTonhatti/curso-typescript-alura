@@ -3,6 +3,7 @@ export function logarTempoDeExecucao(emSegundos: boolean = false) {
 
         const metodoOriginal = descriptor.value;
         descriptor.value = function (...args: Array<any>) {
+            console.log('Inicio logar tempo de execução');
             let divisor = 1;
             let unidade = 'milisegundos';
             

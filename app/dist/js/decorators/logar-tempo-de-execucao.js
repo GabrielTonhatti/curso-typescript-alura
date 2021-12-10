@@ -2,6 +2,7 @@ export function logarTempoDeExecucao(emSegundos = false) {
     return function (target, propertyKey, descriptor) {
         const metodoOriginal = descriptor.value;
         descriptor.value = function (...args) {
+            console.log('Inicio logar tempo de execução');
             let divisor = 1;
             let unidade = 'milisegundos';
             if (emSegundos) {
@@ -17,3 +18,4 @@ export function logarTempoDeExecucao(emSegundos = false) {
         return descriptor;
     };
 }
+//# sourceMappingURL=logar-tempo-de-execucao.js.map
