@@ -1,27 +1,35 @@
-import { DiaDaSenmana } from "../enums/dias-da-semana.js";
+import { imprimir } from "../utils/imprimir.js";
+import { inspect } from "../decorators/inspect.js";
 import { Negociacao } from "../models/negociacao.js";
 import { Negociacoes } from "../models/negociacoes.js";
 import { MensagemView } from "../views/mensagem-view.js";
+import { DiaDaSenmana } from "../enums/dias-da-semana.js";
+import { domInjector } from "../decorators/dom-injector.js";
 import { NegociacoesView } from "../views/negociacoes-view.js";
+import { NegociacoesService } from "../services/negociacoes-service.js";
+import { logarTempoDeExecucao } from "../decorators/logar-tempo-de-execucao.js";
 
 export class NegociacaoController {
 
+    @domInjector('#data')
     private inputData: HTMLInputElement;
+    @domInjector('#quantidade')
     private inputQuantidade: HTMLInputElement;
+    @domInjector('#valor')
     private inputValor: HTMLInputElement;
+
     private negociacoes: Negociacoes = new Negociacoes();
-    private negociacoesView: NegociacoesView = new NegociacoesView('#negociacoesView', true);
+    private negociacoesView: NegociacoesView = new NegociacoesView('#negociacoesView');
     private mensagemView = new MensagemView('#mensagemView');
+    private negociacoesService: NegociacoesService = new NegociacoesService();
 
     constructor() {
-        this.inputData = <HTMLInputElement>document.querySelector('#data');
-        this.inputQuantidade = document.querySelector('#quantidade') as HTMLInputElement;
-        this.inputValor = document.querySelector('#valor') as HTMLInputElement;
         this.negociacoesView.update(this.negociacoes);
     }
 
+    @inspect
+    @logarTempoDeExecucao()
     public adiciona(): void {
-        const t1 = performance.now();
         // Zé, você já viu isso?
         const negociacao: Negociacao = Negociacao.criaDe(
             this.inputData.value,
@@ -31,20 +39,39 @@ export class NegociacaoController {
 
         if (!this.ehDiaUtil(negociacao.data)) {
             this.mensagemView.alert('Apenas negociações em dias úteis são aceitas');
-
             this.ocultarMensagem();
 
             return;
         }
 
         this.negociacoes.adiciona(negociacao);
+        imprimir(negociacao, this.negociacoes);
         this.limparFormulario();
         this.atualizaView();
 
         this.ocultarMensagem();
 
-        const t2 = performance.now();
-        console.log(`Tempo de execução do método adiciona: ${(t2 - t1) / 1000} segundos`);
+    }
+
+    public importaDados(): void {
+
+        this.negociacoesService
+            .obterNegociacoesDoDia()
+            .then(negociacoesDeHoje => {
+                return negociacoesDeHoje.filter(negociacoesDeHoje => {
+                    return !this.negociacoes
+                        .lista()
+                        .some(negociacao => negociacao
+                            .ehIgual(negociacoesDeHoje));
+                });
+            })
+            .then((negociacoesDeHoje: Array<Negociacao>) => {
+                for (let negociacao of negociacoesDeHoje) {
+                    this.negociacoes.adiciona(negociacao);
+                }
+
+                this.negociacoesView.update(this.negociacoes);
+            });
     }
 
     private ehDiaUtil(data: Date) {

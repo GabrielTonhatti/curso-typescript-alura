@@ -11,3 +11,4 @@ export class MensagemView extends View {
         this.elemento.style.display = 'none';
     }
 }
+//# sourceMappingURL=mensagem-view.js.map

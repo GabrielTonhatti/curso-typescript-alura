@@ -8,3 +8,4 @@ export var DiaDaSenmana;
     DiaDaSenmana[DiaDaSenmana["SEXTA"] = 5] = "SEXTA";
     DiaDaSenmana[DiaDaSenmana["SABADO"] = 6] = "SABADO";
 })(DiaDaSenmana || (DiaDaSenmana = {}));
+//# sourceMappingURL=dias-da-semana.js.map
