@@ -9,7 +9,7 @@ if (form) {
         controller.adiciona();
     });
 } else {
-    throw Error('Não possível inicializar a aplicalção. Verifique se o form existe');
+    throw Error('Não possível inicializar a aplicação. Verifique se o form existe');
 }
 
 const botaoImporta = document.querySelector('#botao-importa');
